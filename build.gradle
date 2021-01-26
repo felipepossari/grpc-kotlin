@@ -85,6 +85,6 @@ protobuf {
         all()*.plugins {
             grpc {}
             grpckt {}
-
+        }
     }
 }
