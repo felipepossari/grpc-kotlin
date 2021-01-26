@@ -72,6 +72,9 @@ sourceSets {
             srcDirs("build/generated/source/proto/main/grpc")
             srcDirs("build/generated/source/proto/main/java")
         }
+        kotlin {
+            srcDirs("build/generated/source/proto/main/grpckt")
+        }
     }
 }
 
