@@ -1,0 +1,6 @@
+applicationType: grpc
+defaultPackage: com.felipepossari.grpc
+testFramework: junit
+sourceLanguage: kotlin
+buildTool: gradle
+features: [annotation-api, app-name, gradle, grpc, junit, kotlin, kotlin-application, logback, mongo-sync, readme, shade, testcontainers, yaml]
