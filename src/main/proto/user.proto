@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "GrpcKotlin";
+option objc_class_prefix = "HLW";
+
+package com.felipepossari.grpc;
+
+service UserService {
+  rpc create (UserCreateRequest) returns (UserCreateResponse) {}
+}
+
+message UserCreateRequest {
+  string name = 1;
+  string email = 2;
+  string country = 3;
+}
+
+message UserCreateResponse {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+  string country = 4;
+}
