@@ -25,8 +25,15 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
         val transaction = UUID.randomUUID().toString()
         for (i in 1..5) {
             kotlinx.coroutines.delay(1000)
-            emit(buildPendingPushResponse(transaction))
+            if(i == 3){
+                println("Push response: APPROVED")
+                emit(buildApprovedPushResponse(transaction))
+            }else{
+                println("Push response: PENDING")
+                emit(buildPendingPushResponse(transaction))
+            }
         }
+        println("Push response: APPROVED")
         emit(buildApprovedPushResponse(transaction))
     }
 
