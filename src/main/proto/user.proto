@@ -8,6 +8,7 @@ package com.felipepossari.grpc;
 
 service UserService {
   rpc create (UserCreateRequest) returns (UserCreateResponse) {}
+  rpc sendPush (PushRequest) returns (stream PushResponse) {}
 }
 
 message UserCreateRequest {
@@ -21,4 +22,21 @@ message UserCreateResponse {
   string name = 2;
   string email = 3;
   string country = 4;
+}
+
+message PushRequest {
+  int64 userId = 1;
+  string message = 2;
+}
+
+message PushResponse {
+  string transactionId = 1;
+  Status status = 2;
+
+}
+
+enum Status {
+  PENDING = 0;
+  APPROVED = 1;
+  DENIED = 2;
 }
