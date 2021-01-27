@@ -1,5 +1,6 @@
 package com.felipepossari.grpc
 
+import com.felipepossari.grpc.server.UserEndpoint
 import io.grpc.Server
 import io.grpc.ServerBuilder
 
@@ -14,6 +15,7 @@ import io.grpc.ServerBuilder
 fun main() {
     println("Starting server")
     val server: Server = ServerBuilder.forPort(50051)
+            .addService(UserEndpoint())
             .build()
 
     server.start()
