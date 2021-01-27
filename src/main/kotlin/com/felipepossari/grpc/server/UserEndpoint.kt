@@ -11,6 +11,7 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
         return UserCreateResponse.newBuilder()
                 .setCountry(request.country)
                 .setEmail(request.email)
+                .setName(request.name)
                 .setId(1L)
                 .build()
     }
