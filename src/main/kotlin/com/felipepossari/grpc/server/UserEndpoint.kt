@@ -3,16 +3,23 @@ package com.felipepossari.grpc.server
 import com.felipepossari.grpc.PushRequest
 import com.felipepossari.grpc.PushResponse
 import com.felipepossari.grpc.Status
+import com.felipepossari.grpc.UserActionRequest
+import com.felipepossari.grpc.UserActionResponse
 import com.felipepossari.grpc.UserBulkCreateResponse
 import com.felipepossari.grpc.UserCreateRequest
 import com.felipepossari.grpc.UserCreateResponse
 import com.felipepossari.grpc.UserServiceGrpcKt
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.util.*
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
+
+    private val random = Random(123456)
 
     override suspend fun create(request: UserCreateRequest): UserCreateResponse {
 
@@ -27,10 +34,10 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
         val transaction = UUID.randomUUID().toString()
         for (i in 1..5) {
             kotlinx.coroutines.delay(1000)
-            if(i == 3){
+            if (i == 3) {
                 println("Push response: APPROVED")
                 emit(buildApprovedPushResponse(transaction))
-            }else{
+            } else {
                 println("Push response: PENDING")
                 emit(buildPendingPushResponse(transaction))
             }
@@ -45,13 +52,29 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
 
         requests.collect {
             println("User created: ${it.name}")
-            if(it.name.isNotEmpty()){
+            if (it.name.isNotEmpty()) {
                 usersCreated++
             }
         }
         println("Users created: $usersCreated")
         return UserBulkCreateResponse.newBuilder().apply { count = usersCreated }.build()
     }
+
+    override fun sendAction(requests: Flow<UserActionRequest>): Flow<UserActionResponse> = flow {
+        requests.collect {
+            println("Action received. Id: ${it.actionId}")
+            for (i in 1..it.repeatTimes) {
+                emit(buildUserActionResponse(it.actionId, it.repeatTimes))
+                delay(250)
+            }
+        }
+    }
+
+    private fun buildUserActionResponse(requestActionId: Long, repeatTimes: Int) =
+            UserActionResponse.newBuilder().apply {
+                actionId = requestActionId;
+                actionResponseId = requestActionId * random.nextInt(100..1000)
+            }.build()
 
     private fun buildApprovedPushResponse(transaction: String) =
             buildPushResponse(transaction, Status.APPROVED)

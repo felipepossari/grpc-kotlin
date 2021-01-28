@@ -10,6 +10,17 @@ service UserService {
   rpc create (UserCreateRequest) returns (UserCreateResponse) {}
   rpc sendPush (PushRequest) returns (stream PushResponse) {}
   rpc bulkCreate (stream UserCreateRequest) returns (UserBulkCreateResponse) {}
+  rpc sendAction (stream UserActionRequest) returns (stream UserActionResponse) {}
+}
+
+message UserActionRequest {
+  int64 actionId = 1;
+  int32 repeatTimes = 2;
+}
+
+message UserActionResponse {
+  int64 actionId = 1;
+  int64 actionResponseId = 2;
 }
 
 message UserCreateRequest {

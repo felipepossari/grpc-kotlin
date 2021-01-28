@@ -6,12 +6,17 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 fun main() {
     println("gRPC client")
+
+    val random = Random(123456)
 
     val channel: ManagedChannel = ManagedChannelBuilder
             .forAddress("localhost", 50051)
@@ -20,11 +25,42 @@ fun main() {
 
     val client = UserServiceGrpcKt.UserServiceCoroutineStub(channel)
 
-//    callCreateUser(client)
-//    callSendPush(client)
+
+    println("---------- callCreateUser(client) ----------")
+    callCreateUser(client)
+
+    println("---------- callSendPush(client) ----------")
+    callSendPush(client)
+
+    println("---------- callBulkCreateUser(client) ----------")
     callBulkCreateUser(client)
+
+            println("---------- callSendAction(client, random) ----------")
+    callSendAction(client, random)
     channel.shutdown()
 }
+
+fun callSendAction(client: UserServiceGrpcKt.UserServiceCoroutineStub, random: Random) = runBlocking {
+
+    client.sendAction(createActionFlow(random)).collect {
+        println("Action response received: ${it.actionId} - ${it.actionResponseId}")
+    }
+}
+
+private fun createActionFlow(random: Random) = flow {
+    for(i in 1..10){
+        val times = random.nextInt(1..5)
+        println("Sending action. Id: $i - Times: $times")
+        emit(buildUserActionRequest(i, times))
+        delay(timeMillis = 500)
+    }
+}
+
+private fun buildUserActionRequest(i: Int, times: Int) : UserActionRequest =
+        UserActionRequest.newBuilder().apply {
+            actionId = i.toLong()
+            repeatTimes = times
+        }.build()
 
 fun callBulkCreateUser(client: UserServiceGrpcKt.UserServiceCoroutineStub) {
 
