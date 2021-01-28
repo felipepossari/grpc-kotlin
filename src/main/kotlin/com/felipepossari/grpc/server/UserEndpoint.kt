@@ -32,18 +32,18 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
 
     override fun sendPush(request: PushRequest): Flow<PushResponse> = flow {
         val transaction = UUID.randomUUID().toString()
-        for (i in 1..5) {
-            kotlinx.coroutines.delay(1000)
-            if (i == 3) {
+        val randomPushApproval = random.nextInt(1..10)
+        for (i in 1..10) {
+            kotlinx.coroutines.delay(500)
+            if (i == randomPushApproval) {
                 println("Push response: APPROVED")
                 emit(buildApprovedPushResponse(transaction))
+                break;
             } else {
                 println("Push response: PENDING")
                 emit(buildPendingPushResponse(transaction))
             }
         }
-        println("Push response: APPROVED")
-        emit(buildApprovedPushResponse(transaction))
     }
 
     override suspend fun bulkCreate(requests: Flow<UserCreateRequest>): UserBulkCreateResponse {

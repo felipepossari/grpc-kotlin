@@ -24,7 +24,6 @@ fun main() {
 
     val client = UserServiceGrpcKt.UserServiceCoroutineStub(channel)
 
-
     println("---------- callCreateUser(client) ----------")
     callCreateUser(client)
 
@@ -68,18 +67,14 @@ fun callSendPush(client: UserServiceGrpcKt.UserServiceCoroutineStub) {
         message = "Push message"
     }.build()
 
-    try {
-        runBlocking {
-            client.sendPush(pushRequest).collect {
-                if (it.status == Status.APPROVED) {
-                    println("Status found")
-                    currentCoroutineContext().cancel()
-                }
+    runBlocking {
+        client.sendPush(pushRequest).collect {
+            if (it.status == Status.APPROVED) {
+                println("Status found")
+            }else {
                 println("Push status: ${it.status}")
             }
         }
-    } catch (ex: CancellationException) {
-        println("Stream stopped")
     }
 }
 
