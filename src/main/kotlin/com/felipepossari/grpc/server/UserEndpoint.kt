@@ -3,10 +3,12 @@ package com.felipepossari.grpc.server
 import com.felipepossari.grpc.PushRequest
 import com.felipepossari.grpc.PushResponse
 import com.felipepossari.grpc.Status
+import com.felipepossari.grpc.UserBulkCreateResponse
 import com.felipepossari.grpc.UserCreateRequest
 import com.felipepossari.grpc.UserCreateResponse
 import com.felipepossari.grpc.UserServiceGrpcKt
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.util.*
 
@@ -35,6 +37,20 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
         }
         println("Push response: APPROVED")
         emit(buildApprovedPushResponse(transaction))
+    }
+
+    override suspend fun bulkCreate(requests: Flow<UserCreateRequest>): UserBulkCreateResponse {
+        println("User bulk create request received")
+        var usersCreated = 0L
+
+        requests.collect {
+            println("User created: ${it.name}")
+            if(it.name.isNotEmpty()){
+                usersCreated++
+            }
+        }
+        println("Users created: $usersCreated")
+        return UserBulkCreateResponse.newBuilder().apply { count = usersCreated }.build()
     }
 
     private fun buildApprovedPushResponse(transaction: String) =
