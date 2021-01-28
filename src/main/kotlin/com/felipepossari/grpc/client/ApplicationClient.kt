@@ -6,7 +6,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -35,7 +34,7 @@ fun main() {
     println("---------- callBulkCreateUser(client) ----------")
     callBulkCreateUser(client)
 
-            println("---------- callSendAction(client, random) ----------")
+    println("---------- callSendAction(client, random) ----------")
     callSendAction(client, random)
     channel.shutdown()
 }
@@ -46,21 +45,6 @@ fun callSendAction(client: UserServiceGrpcKt.UserServiceCoroutineStub, random: R
         println("Action response received: ${it.actionId} - ${it.actionResponseId}")
     }
 }
-
-private fun createActionFlow(random: Random) = flow {
-    for(i in 1..10){
-        val times = random.nextInt(1..5)
-        println("Sending action. Id: $i - Times: $times")
-        emit(buildUserActionRequest(i, times))
-        delay(timeMillis = 500)
-    }
-}
-
-private fun buildUserActionRequest(i: Int, times: Int) : UserActionRequest =
-        UserActionRequest.newBuilder().apply {
-            actionId = i.toLong()
-            repeatTimes = times
-        }.build()
 
 fun callBulkCreateUser(client: UserServiceGrpcKt.UserServiceCoroutineStub) {
 
@@ -111,6 +95,21 @@ fun callCreateUser(client: UserServiceGrpcKt.UserServiceCoroutineStub) {
     println("Response: ${response.id} - ${response.email} - ${response.country} - ${response.name}")
 
 }
+
+private fun createActionFlow(random: Random) = flow {
+    for (i in 1..10) {
+        val times = random.nextInt(1..5)
+        println("Sending action. Id: $i - Times: $times")
+        emit(buildUserActionRequest(i, times))
+        delay(timeMillis = 500)
+    }
+}
+
+private fun buildUserActionRequest(i: Int, times: Int): UserActionRequest =
+        UserActionRequest.newBuilder().apply {
+            actionId = i.toLong()
+            repeatTimes = times
+        }.build()
 
 private fun buildBulkUserCreateRequest(i: Int): UserCreateRequest {
     val userCreateRequest = UserCreateRequest.newBuilder()
