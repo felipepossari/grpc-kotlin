@@ -9,6 +9,7 @@ package com.felipepossari.grpc;
 service UserService {
   rpc create (UserCreateRequest) returns (UserCreateResponse) {}
   rpc sendPush (PushRequest) returns (stream PushResponse) {}
+  rpc bulkCreate (stream UserCreateRequest) returns (UserBulkCreateResponse) {}
 }
 
 message UserCreateRequest {
@@ -32,7 +33,10 @@ message PushRequest {
 message PushResponse {
   string transactionId = 1;
   Status status = 2;
+}
 
+message UserBulkCreateResponse {
+  int64 count = 1;
 }
 
 enum Status {
