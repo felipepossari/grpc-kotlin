@@ -21,14 +21,23 @@ class UserEndpoint : UserServiceGrpcKt.UserServiceCoroutineImplBase() {
 
     private val random = Random(123456)
 
-    override suspend fun create(request: UserCreateRequest): UserCreateResponse {
+    override suspend fun create(request: UserCreateRequest): UserCreateResponse = kotlin.runCatching {
+
+        if(request.email.isEmpty()){
+            throw Exception("Email null or empty")
+        }
 
         return UserCreateResponse.newBuilder().apply {
             email = request.email;
             name = request.name;
             country = request.country
         }.build()
-    }
+    }.onFailure { e ->
+        throw io.grpc.Status.INVALID_ARGUMENT
+                .withCause(e.cause)
+                .withDescription(e.message)
+                .asRuntimeException()
+    }.getOrThrow()
 
     override fun sendPush(request: PushRequest): Flow<PushResponse> = flow {
         val transaction = UUID.randomUUID().toString()
