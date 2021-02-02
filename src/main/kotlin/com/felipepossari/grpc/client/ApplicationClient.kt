@@ -2,6 +2,8 @@ package com.felipepossari.grpc
 
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
+import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts
+import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
@@ -9,6 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import java.io.File
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -17,10 +20,16 @@ fun main() {
 
     val random = Random(123456)
 
-    val channel: ManagedChannel = ManagedChannelBuilder
-            .forAddress("localhost", 50051)
-            .usePlaintext()
+    // Plaintext channel
+//    val channel: ManagedChannel = ManagedChannelBuilder
+//            .forAddress("localhost", 50051)
+//            .usePlaintext()
+//            .build()
+
+    val channel: ManagedChannel = NettyChannelBuilder.forAddress("localhost", 50051)
+            .sslContext(GrpcSslContexts.forClient().trustManager(File("ssl/ca.crt")).build())
             .build()
+
 
     val client = UserServiceGrpcKt.UserServiceCoroutineStub(channel)
 

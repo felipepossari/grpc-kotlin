@@ -43,6 +43,10 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
+
+    implementation("io.grpc:grpc-netty-shaded:1.33.1"){
+        exclude group:"io.grpc", module: "grpc-netty"
+    }
 }
 
 
