@@ -1,18 +1,13 @@
-## Micronaut 2.3.0 Documentation
+## gRPC-kotlin project
 
-- [User Guide](https://docs.micronaut.io/2.3.0/guide/index.html)
-- [API Reference](https://docs.micronaut.io/2.3.0/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/2.3.0/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+gRPC project that simulates unary and stream calls. This project uses gRPC, Kotlin and Micronaut.
 
-## Feature mongo-sync documentation
+How to run:
 
-- [Micronaut Mongo Synchronous Driver documentation](https://micronaut-projects.github.io/micronaut-mongodb/latest/guide/index.html)
+- Git clone;
+- Gradle clean build;
+- Run the script ssl/instructions.sh to generate a certificate;
+- Run server/Application.kt to start the gRPC server;
+- Run client/ApplicationClient.kt to start the server calls;
 
-- [https://docs.mongodb.com](https://docs.mongodb.com)
-
-## Feature testcontainers documentation
-
-- [https://www.testcontainers.org/](https://www.testcontainers.org/)
-
+You can debug it adding breakpoints into server/UserEndpoint.kt
